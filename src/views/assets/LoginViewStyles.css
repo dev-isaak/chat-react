@@ -1,0 +1,12 @@
+.login-form{
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  max-width: 400px;
+  margin: auto;
+}
+
+/* .MuiFormControl-root{
+  display: flex;
+  gap: 1em;
+} */
