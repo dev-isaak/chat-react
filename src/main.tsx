@@ -3,13 +3,13 @@ import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import store from './redux/store.ts';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-// import HomeView from './views/HomeView.tsx';
-import LoginView from './views/LoginView.tsx';
 import ChatRoomView from './views/ChatRoomView.tsx';
 import Page404 from './Page404.tsx';
 import UserSettingsView from './views/UserSettingsView.tsx';
 import Root from './routes/root.tsx';
-import LogoutView from './views/LogoutView.tsx';
+import { Auth0Provider } from '@auth0/auth0-react';
+import Index from './routes/index.tsx';
+import ProtectedRoute from './routes/ProtectedRoute.tsx';
 
 const router = createBrowserRouter([
 	{
@@ -17,30 +17,37 @@ const router = createBrowserRouter([
 		element: <Root />,
 		errorElement: <Page404 />,
 		children: [
-			{
-				path: 'login',
-				element: <LoginView />,
-			},
+			{ index: true, element: <Index /> },
 			{
 				path: 'chat',
 				element: <ChatRoomView />,
 			},
 			{
 				path: 'user-settings',
-				element: <UserSettingsView />,
-			},
-			{
-				path: 'logout',
-				element: <LogoutView />,
+				element: (
+					<ProtectedRoute>
+						<UserSettingsView />
+					</ProtectedRoute>
+				),
 			},
 		],
 	},
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-	<Provider store={store}>
-		<React.StrictMode>
-			<RouterProvider router={router} />
-		</React.StrictMode>
-	</Provider>,
+	<Auth0Provider
+		domain="dev-uwvo44tgkoe8c25m.us.auth0.com"
+		clientId="0VfRC1AA28BkLb0QiO2yunLbZWLZ3RIP"
+		authorizationParams={{
+			redirect_uri: 'http://localhost:5173/chat', // The URL to where you'd like to redirect your users after they authenticate with Auth0.
+		}}
+		useRefreshTokens={true}
+		cacheLocation={'localstorage'}
+	>
+		<Provider store={store}>
+			<React.StrictMode>
+				<RouterProvider router={router} />
+			</React.StrictMode>
+		</Provider>
+	</Auth0Provider>,
 );

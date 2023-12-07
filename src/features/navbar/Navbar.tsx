@@ -12,7 +12,9 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import LoginButton from '../login/LoginButton';
+import { useAuth0 } from '@auth0/auth0-react';
+import LogoutButton from '../login/LogoutButton';
 
 const pages = [
 	{
@@ -25,11 +27,6 @@ const pages = [
 		path: '/chat',
 		private: true,
 	},
-	{
-		name: 'Login',
-		path: '/login',
-		private: false,
-	},
 ];
 const settings = [
 	{
@@ -37,14 +34,10 @@ const settings = [
 		path: '/user-settings',
 		private: true,
 	},
-	{
-		name: 'Logout',
-		path: '/logout',
-		private: false,
-	},
 ];
 
 function ResponsiveAppBar() {
+	const { isAuthenticated, user } = useAuth0();
 	const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 	const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
@@ -86,7 +79,10 @@ function ResponsiveAppBar() {
 						xat-e
 					</Typography>
 
-					<Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+					<Box
+						component="nav"
+						sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}
+					>
 						<IconButton
 							size="large"
 							aria-label="account of current user"
@@ -117,7 +113,7 @@ function ResponsiveAppBar() {
 						>
 							{pages.map((page) => (
 								<MenuItem key={page.name} onClick={handleCloseNavMenu}>
-									<Link to={page.path}>{page.name}</Link>
+									<Button href={page.path}>{page.name}</Button>
 								</MenuItem>
 							))}
 						</Menu>
@@ -153,37 +149,42 @@ function ResponsiveAppBar() {
 							</Button>
 						))}
 					</Box>
-
-					<Box sx={{ flexGrow: 0 }}>
-						<Tooltip title="Open settings">
-							<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-								<Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-							</IconButton>
-						</Tooltip>
-						<Menu
-							sx={{ mt: '45px' }}
-							id="menu-appbar"
-							anchorEl={anchorElUser}
-							anchorOrigin={{
-								vertical: 'top',
-								horizontal: 'right',
-							}}
-							keepMounted
-							transformOrigin={{
-								vertical: 'top',
-								horizontal: 'right',
-							}}
-							open={Boolean(anchorElUser)}
-							onClose={handleCloseUserMenu}
-						>
-							{settings.map((setting) => (
-								<MenuItem key={setting.name} onClick={handleCloseUserMenu}>
-									<Link to={setting.path}>{setting.name}</Link>
-									{/* <Typography textAlign="center">{setting.name}</Typography> */}
+					{!isAuthenticated ? (
+						<LoginButton />
+					) : (
+						<Box sx={{ flexGrow: 0 }}>
+							<Tooltip title="Open settings">
+								<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+									<Avatar alt="User Icon" src={user?.picture} />
+								</IconButton>
+							</Tooltip>
+							<Menu
+								sx={{ mt: '45px' }}
+								id="menu-appbar"
+								anchorEl={anchorElUser}
+								anchorOrigin={{
+									vertical: 'top',
+									horizontal: 'right',
+								}}
+								keepMounted
+								transformOrigin={{
+									vertical: 'top',
+									horizontal: 'right',
+								}}
+								open={Boolean(anchorElUser)}
+								onClose={handleCloseUserMenu}
+							>
+								{settings.map((setting) => (
+									<MenuItem key={setting.name} onClick={handleCloseUserMenu}>
+										<Button href={setting.path}>{setting.name}</Button>
+									</MenuItem>
+								))}
+								<MenuItem>
+									<LogoutButton />
 								</MenuItem>
-							))}
-						</Menu>
-					</Box>
+							</Menu>
+						</Box>
+					)}
 				</Toolbar>
 			</Container>
 		</AppBar>
