@@ -16,7 +16,6 @@ export default function ChatRoomView() {
 
 	return isAuthenticated ? (
 		<div>
-			{/* <h1>CHATS</h1> */}
 			<ChatLayout />
 		</div>
 	) : (

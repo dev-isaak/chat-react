@@ -10,6 +10,12 @@ import Root from './routes/root.tsx';
 import { Auth0Provider } from '@auth0/auth0-react';
 import Index from './routes/index.tsx';
 import ProtectedRoute from './routes/ProtectedRoute.tsx';
+import { themeOptions } from './theme.ts';
+import { ThemeProvider } from '@emotion/react';
+import './global.css';
+import ChatList from './features/chat/ChatList.tsx';
+import IndexChat from './features/chat/IndexChat.tsx';
+import { chatLoader } from './features/chat/chatLayout.loader.ts';
 
 const router = createBrowserRouter([
 	{
@@ -19,8 +25,16 @@ const router = createBrowserRouter([
 		children: [
 			{ index: true, element: <Index /> },
 			{
-				path: 'chat',
+				path: 'rooms',
 				element: <ChatRoomView />,
+				children: [
+					{ index: true, element: <IndexChat /> },
+					{
+						path: '/rooms/:roomId',
+						element: <ChatList />,
+						loader: chatLoader,
+					},
+				],
 			},
 			{
 				path: 'user-settings',
@@ -46,7 +60,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 	>
 		<Provider store={store}>
 			<React.StrictMode>
-				<RouterProvider router={router} />
+				<ThemeProvider theme={themeOptions}>
+					<RouterProvider router={router} />
+				</ThemeProvider>
 			</React.StrictMode>
 		</Provider>
 	</Auth0Provider>,

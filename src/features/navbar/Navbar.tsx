@@ -24,7 +24,7 @@ const pages = [
 	},
 	{
 		name: 'Chats',
-		path: '/chat',
+		path: '/rooms',
 		private: true,
 	},
 ];
@@ -65,7 +65,7 @@ function ResponsiveAppBar() {
 						variant="h6"
 						noWrap
 						component="a"
-						href="/"
+						href={pages[0].path}
 						sx={{
 							mr: 2,
 							display: { xs: 'none', md: 'flex' },
